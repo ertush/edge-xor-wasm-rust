@@ -25,11 +25,12 @@ export default async function handler(request: Request, event: Event) {
     return new Response('Two inputs are required', { status: 400 })
   }
 
-  const a = convertToNumber(url.searchParams.get('a'))
-  const b = convertToNumber(url.searchParams.get('b'))
+  const a = convertToNumber(url.searchParams.get('a') as string)
+  const b = convertToNumber(url.searchParams.get('b') as string)
 
   const { exports } = (await WebAssembly.instantiate(wasm)) as any
 
   const value = exports.xor(a, b)
-  return new Response(hexFormat(value))
+
+  return new Response(JSON.stringify({xor: hexFormat(value)})).json()
 }
